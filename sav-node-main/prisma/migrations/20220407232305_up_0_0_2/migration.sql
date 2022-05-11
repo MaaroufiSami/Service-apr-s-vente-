@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `intervention_status` ADD COLUMN `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3);

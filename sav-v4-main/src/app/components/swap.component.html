@@ -1,0 +1,203 @@
+<div class="border-gray-200 border p-4 bg-white m-3" *ngIf="app.screen1">
+    <div class="mb-5">
+        <h2><b>Suivi des terminaux en attente de swap</b></h2>
+    </div>
+    <table class="w-full border-2 m-2 text-center">
+        <tr class="bg-gray-100">
+            <th class="border-2"> N°Fiche </th>
+            <th class="border-2"> Marque </th>
+            <th class="border-2"> Modele </th>
+            <th class="border-2"> IMEI / Code produit </th>
+            <th class="border-2"> N°serie batterie </th>
+            <th class="border-2"> date de fiche d'intervention </th>
+            <th class="border-2"> Retard</th>
+            <th class="border-2"> SWAP</th>
+        </tr>
+        <tr *ngFor="let item of app.items">
+            <td class="border-2 text-sm p-1"> {{ item.id }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.brand }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.model }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.imei }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.batteryId }}</td>
+            <td class="border-2 text-sm p-1"> {{ dateFormat(item.createdAt) }}</td>
+            <td class="border-2 text-sm p-1"> {{ retardTime(item.createdAt) }}</td>
+            <td class="border-2 text-sm p-1">
+                <button (click)="openSwapItemModel(item)"
+                    class="px-2 py-1 text-sm font-medium leading-5 text-white bg-gray-500 border border-transparent rounded-md active:bg-gray-700">
+                    SWAP</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="border-gray-200 border p-4 bg-white m-3" *ngIf="app.screen2">
+    <p class="mb-2 text-sm font-semibold text-gray-700"> Material de remplacement: </p>
+    <hr class="mb-2" />
+    <div>
+        <div class="flex items-center justify-around">
+            <div class="flex flex-col justify-around" style="max-width: 400px; height: 179px;">
+                <div class="flex justify-between items-center">
+                    <b>Num de serie / IMEI: </b>
+                    <input type="text" class="px-2 py-1 rounded-md border" />
+                </div>
+                <div class="flex justify-between items-center">
+                    <b>Marque: </b>
+                    <input type="text" [value]="app.currentItem.brand" class="px-2 py-1 rounded-md border" />
+                </div>
+                <div class="flex justify-between items-center">
+                    <b>Modele: </b>
+                    <input type="text" [value]="app.currentItem.model" class="px-2 py-1 rounded-md border" />
+                </div>
+                <div class="flex justify-between items-center">
+                    <b>Code de produit: </b>
+                    <input type="text" class="px-2 py-1 rounded-md border" />
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between items-center">
+                    <b style="max-width: 180px;">Num de serie / IMEI de l'appariel endommagé:</b>
+                    <input type="text" [value]="app.currentItem.imei" class="px-2 py-1 rounded-md border" />
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-center">
+            <button (click)=" this.app.showScreen1();"
+                class="w-full px-5 py-2 text-sm font-medium text-white bg-gray-600 border rounded-lg sm:w-auto hover:bg-gray-700">
+                Annuler
+            </button>
+            <p class="w-2"></p>
+            <button (click)="valideSwap()"
+                class="w-full px-5 py-2 text-sm font-medium text-white bg-orange-600 border rounded-lg sm:w-auto hover:bg-orange-700">
+                Valide
+            </button>
+        </div>
+    </div>
+</div>
+<div *ngIf="app.result.show">
+    <div id="invoice" class="border-gray-200 border p-4 bg-white my-2">
+        <div class="absolute">
+            <img src="/assets/logo.png" width="150" height="64" />
+        </div>
+
+        <h2 class="text-center h-16 flex justify-center items-center mb-4" style="font-weight: bold;font-size: 24px;">
+            Fichie d'intervention
+        </h2>
+
+        <div class="flex justify-between">
+            <p><b>Num Recu: </b> {{ app.result.id }} </p>
+            <p>
+                <b>Date: </b> {{ app.result.date }} <br />
+                <b>Boutique: </b> {{ app.result.shop }}
+            </p>
+        </div>
+        <h3 class="my-3 text-xl"><b>Informations Client</b></h3>
+        <table class="w-full">
+            <tr>
+                <td><b>Nom: </b> {{app.result.client.firstName}} </td>
+                <td><b>Num Tel 1: </b> {{app.result.client.phoneNumber1}} </td>
+            </tr>
+            <tr>
+                <td><b>Prenom: </b> {{app.result.client.lastName}} </td>
+                <td><b>Num Tel 2: </b> {{app.result.client.phoneNumber2}} </td>
+
+            </tr>
+            <tr>
+                <td><b>Num Cin Passeport: </b> {{app.result.client.cin}} </td>
+                <td><b>Email: </b> {{app.result.client.email}} </td>
+            </tr>
+        </table>
+        <h3 class="my-3  text-xl"><b>Material</b></h3>
+        <table class="w-full">
+            <tr>
+                <td><b>Date d'achat: </b> {{app.result.device.purchase_date}}</td>
+                <td><b>Sous garantie: </b> {{app.result.device.rest_guarantee > 1 ? 'Oui' : 'Non'}}</td>
+            </tr>
+            <tr>
+                <td><b>Type: </b> TerminalMobile</td>
+                <td><b>type de Panne: </b> {{app.result.pannes}}</td>
+            </tr>
+            <tr>
+                <td><b>Marque: </b> {{app.result.device.brand}}</td>
+                <td><b>description de Panne: </b> {{app.result.description}}</td>
+            </tr>
+            <tr>
+                <td><b>Modele: </b>{{app.result.device.model}} </td>
+            </tr>
+            <tr>
+                <td><b>Num d'serie / IMEI: </b> {{app.result.device.imei}}</td>
+            </tr>
+            <tr>
+                <td><b>Code de produit: </b> {{app.result.device.imei}}</td>
+            </tr>
+        </table>
+
+        <h3 class="my-3  text-xl"><b>Terminal de Remplacement</b></h3>
+        <div class="w-full">
+            <p><b>Marque: </b> {{app.result.Swap[0].marque }}</p>
+            <p><b>Modele: </b> {{app.result.Swap[0].model }}</p>
+            <p><b>Num d'serie / IMEI: </b> {{app.result.Swap[0].imei}}</p>
+            <p><b>Num d'serie / IMEI: </b> {{app.result.Swap[0].imei}}</p>
+
+        </div>
+
+        <div class="flex justify-between">
+            <fieldset class="border-2" style="width: 250px;">
+                <legend>Signature Client</legend>
+                <div class="h-9"></div>
+            </fieldset>
+
+            <fieldset class="border-2" style="width: 250px;">
+                <legend>Signature Responsable</legend>
+                <div class="h-9"></div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="flex justify-center mb-20">
+        <button
+            class="m-1 flex items-center justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-700 border border-transparent rounded-lg active:bg-blue-600 focus:outline-none">
+            imprimer fiche / Export PDF</button>
+    </div>
+</div>
+<div *ngIf="app.isModalOpen" class="fixed inset-0 z-30 flex bg-black bg-opacity-50 items-baseline justify-center">
+    <div class="max-w-xl mt-8 overflow-hidden bg-white rounded-t-lg">
+        <div class="mt-4 mb-6 px-6 py-4">
+            <p class="mb-2 text-lg font-semibold text-gray-700"> Remplacement Produit: </p>
+            <hr class="mb-2" />
+            <div class="flex text-sm text-gray-700" style="flex-direction: column;min-width: 320px;">
+                <p class="mb-5 text-sm font-semibold text-gray-700"> Produit Disponible: </p>
+
+                <table [width]="'100%'" class="text-center">
+                    <tr class="bg-gray-100 border">
+                        <td class="border">Nom Produit</td>
+                        <td class="border">Quantité</td>
+                    </tr>
+                    <tr>
+                        <td class="border py-2">{{ app.currentItem.brand }} {{ app.currentItem.model }}</td>
+                        <td class="border"> 10 </td>
+                    </tr>
+                </table>
+
+                <div class="flex items-center justify-center mt-5">
+
+                    <button (click)="swapDevice()"
+                        class="w-full px-4 py-2 text-sm font-medium text-white bg-orange-600 border rounded-lg sm:w-auto hover:bg-orange-700">
+                        Remplacer
+                    </button>
+                    <p class="w-2"></p>
+                    <button (click)="generateTicket()"
+                        class="w-full px-4 py-2 text-sm font-medium text-white bg-gray-600 border rounded-lg sm:w-auto hover:bg-gray-700">
+                        generer ticket achat sav
+                    </button>
+                </div>
+            </div>
+        </div>
+        <footer class="flex  items-center justify-end px-6 py-3 bg-gray-50 ">
+            <button (click)="app.isModalOpen = false;"
+                class="w-full px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg sm:w-auto hover:border-gray-500">
+                Fermer
+            </button>
+
+        </footer>
+    </div>
+</div>

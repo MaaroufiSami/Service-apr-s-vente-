@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE `intervention_status` ADD COLUMN `amount` VARCHAR(191) NULL,
+    ADD COLUMN `marque` VARCHAR(191) NULL,
+    ADD COLUMN `modele` VARCHAR(191) NULL,
+    ADD COLUMN `newIMEI` VARCHAR(191) NULL,
+    ADD COLUMN `pdflink` VARCHAR(191) NULL;

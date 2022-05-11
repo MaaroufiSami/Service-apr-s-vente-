@@ -1,0 +1,737 @@
+<div class="flex flex-col flex-1 w-full">
+    <main class="h-full overflow-y-auto">
+        <div class="container px-6 mx-auto grid">
+            <h2 class="my-6 text-2xl font-semibold text-gray-700 ">
+                Rechercher
+            </h2>
+
+            <!-- Search -->
+            <div
+                class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-lime-100 bg-orange-500 rounded-lg shadow-md">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                        </path>
+                    </svg>
+                    <span>
+                        <label class="block text-sm">
+                            <span class="text-white">Num IMEI:</span>
+                            <div style="height: 10px;"></div>
+                            <input [(ngModel)]="myDevice.imei"
+                                style="padding: 9px 10px;border-radius: 10px;width: 250px;"
+                                class="block text-gray-600 focus:border-lime-400 focus:outline-none focus:shadow-outline-lime"
+                                placeholder="IMEI .....">
+                        </label>
+                    </span>
+                </div>
+
+                <span>
+                    <button (click)="searchForIMEI()"
+                        class="flex items-center justify-between px-4 py-2 text-sm font-medium leading-5 text-white bg-orange-700 border border-transparent rounded-lg active:bg-orange-600">
+                        <span><b>Rechercher</b></span>
+                       
+                    </button>
+                </span>
+            </div>
+
+            <!-- Cards -->
+            <div class="min-w-0 p-3 bg-red-400 text-red-700 rounded-lg shadow-xs" *ngIf="deviceRequstInfo.haveMsg">
+                {{ deviceRequstInfo.msg }}
+            </div>
+            <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs" *ngIf="deviceRequstInfo.isFound">
+                <h4 class="mb-4 font-semibold text-gray-600 ">
+                    Informations produits
+                </h4>
+                <div>
+                    <p class="text-gray-600 ">
+                        <b>État: </b>
+                        <span class="text-gray-800">{{myDevice.status }}</span>
+                    </p>
+                    <p class="text-gray-600 ">
+                        <b>Date d'achat: </b>
+                        <span class="text-gray-800">{{myDevice.purchase_date }}</span>
+                    </p>
+                    <p class="text-gray-600 ">
+                        <b>Duree de garantie: </b>
+                        <span class="text-gray-800">{{myDevice.guarantee }} ans</span>
+                    </p>
+                    <p class="text-gray-600 ">
+                        <b>Reste de la duree de garantie: </b>
+                        <span class="text-gray-800">{{myDevice.rest_guarantee }} jours</span>
+                    </p>
+                    <p class="text-gray-600 ">
+                        <b>Nombre de retour SAV: </b>
+                        <span class="text-gray-800">{{myDevice.nb_retour_sav }}</span>
+                    </p>
+                    <p class="text-gray-600 ">
+                        <b>Terminal Assuré: </b>
+                        <span class="text-gray-800">{{myDevice.insured }}</span>
+                    </p>
+                </div>
+
+                <div class="flex justify-end" *ngIf="myDevice.isAvailable">
+                    <button (click)="swap.isModalOpen = true;" *ngIf="isItemSWAP(myDevice.purchase_date)"
+                        class="mx-2 flex items-center justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-700 border border-transparent rounded-lg active:bg-blue-600 focus:outline-none focus:shadow-outline-lime">
+                        <span>remplacer terminal</span>
+
+                    </button>
+
+                    <button (click)="createFile()"
+                        class="flex items-center justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-lime-700 border border-transparent rounded-lg active:bg-lime-600 focus:outline-none focus:shadow-outline-lime">
+                        <span>creer fichier</span>
+
+                    </button>
+                </div>
+                <p class="p-2 m-2 bg-lime-100 text-lime-500 rounded-md text-center" *ngIf="!myDevice.isAvailable">
+                    Ce produit a ete remplace ou ticket d'achet est deja genere
+                </p>
+
+            </div>
+
+            <!-- SWAP -->
+            <div class="min-w-0 mb-5 p-4 bg-white rounded-lg shadow-xs" *ngIf="swap.confirmSWAP">
+                <div *ngIf="swap.screen1">
+                    <p>
+                        <b>Informations Client</b>
+                    </p>
+                    <hr class="my-2" />
+                    <table [width]="['100%']">
+                        <tr>
+                            <td>
+                                <span class="text-gray-700 inline m-1">Nom:</span>
+
+                            </td>
+                            <td>
+                                <input style="padding: 5px 10px;border-radius: 10px;"
+                                    class="block text-gray-600 bg-gray-300 border-gray-500 border-2"
+                                    [(ngModel)]="swap.client.firstName">
+                            </td>
+                            <td>
+                                <span class="text-gray-700 inline m-1">Num Tel 1:</span>
+
+                            </td>
+                            <td>
+                                <input style="padding: 5px 10px;border-radius: 10px;"
+                                    class="block text-gray-600 bg-gray-300 border-gray-500 border-2"
+                                    [(ngModel)]="swap.client.phoneNumber1">
+                            </td>
+                            <td>
+                                <span class="text-gray-700 inline m-1">Num Cin Passeport:</span>
+
+                            </td>
+                            <td>
+                                <input style="padding: 5px 10px;border-radius: 10px;"
+                                    class="block text-gray-600 bg-gray-300 border-gray-500 border-2"
+                                    [(ngModel)]="swap.client.cin">
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="height: 10px;"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="text-gray-700 inline m-1">Prenom:</span>
+                            </td>
+                            <td>
+                                <input style="padding: 5px 10px;border-radius: 10px;"
+                                    class="block text-gray-600 bg-gray-300 border-gray-500 border-2"
+                                    [(ngModel)]="swap.client.lastName">
+
+                            </td>
+                            <td>
+                                <span class="text-gray-700 inline m-1">Num Tel 2:</span>
+
+                            </td>
+                            <td>
+                                <input style="padding: 5px 10px;border-radius: 10px;"
+                                    class="block text-gray-600  border-gray-500 border-2"
+                                    [(ngModel)]="swap.client.phoneNumber2">
+                            </td>
+                            <td>
+                                <span class="text-gray-700 inline m-1">email:</span>
+
+                            </td>
+                            <td>
+                                <input style="padding: 5px 10px;border-radius: 10px;"
+                                    class="block text-gray-600  border-gray-500 border-2"
+                                    [(ngModel)]="swap.client.email">
+                            </td>
+
+                        </tr>
+                    </table>
+                    <br />
+                    <p class="my-2">
+                        <b>Material </b>
+                    </p>
+                    <hr class="my-2" />
+                    <table [width]="'100%'">
+                        <tr>
+                            <td>
+                                <p><b>Type:</b> TerminalMobile</p>
+
+                                <p><b>Marque:</b> {{ myDevice.brand }}</p>
+                            </td>
+                            <td>
+                                <p><b>Modele:</b> {{ myDevice.brand }} {{ myDevice.model }}</p>
+                                <p><b>Num de serie / IMEI:</b> {{ myDevice.imei }}</p>
+                            </td>
+                        </tr>
+
+                    </table>
+                    <br />
+                    <table [width]="'100%'">
+                        <tr>
+                            <p>Type de Panne: </p>
+                            <td [width]="'25%'">
+                                <select name="Accessoires" [(ngModel)]="swap.toPanne"
+                                    style="width: 80%; height: 150px; border:1px solid" multiple>
+                                    <option value='Probléme déconnexion'> Probléme déconnexion </option>
+                                    <option value='Probléme de port réseau'> Probléme de port réseau </option>
+                                    <option value="Probléme d'alimentation"> Probléme d'alimentation </option>
+                                    <option value='Probléme de port téléphonique'> Probléme de port téléphonique
+                                    </option>
+                                    <option value="Probléme d'émission et ou réception d'appel"> Probléme d'émission
+                                        et/ou
+                                        réception d'appel </option>
+                                </select>
+                            </td>
+                            <td [width]="'25%'">
+                                <button (click)="swap.addToSwapPanne()"
+                                    class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-600 border border-transparent rounded-lg active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-lime">
+                                    Ajouter >>
+                                </button>
+                                <br />
+                                <br />
+                                <button (click)="swap.removeFromSwapPanne()"
+                                    class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-600 border border-transparent rounded-lg active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-lime">
+                                    << enlever </button>
+                            </td>
+                            <td [width]="'25%'">
+                                <select name="av-Acce" [(ngModel)]="swap.toRemovePanne"
+                                    style="width:100%; height: 150px; border:1px solid" multiple>
+                                    <option *ngFor="let item of swap.pannes" value="{{item}}">
+                                        {{ item }}
+                                    </option>
+                                </select>
+                            </td>
+                            <td [width]="'25%'" class="text-center">
+                                <p>Description de Panne:</p>
+                                <textarea class="border" [(ngModel)]='swap.description'>
+
+                            </textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <br />
+                    <div class="flex justify-end">
+                        <button (click)="swap.screen1 = false;"
+                            class="flex items-center justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-lime-700 border border-transparent rounded-lg active:bg-lime-600 focus:outline-none">
+                            <span>Remplacement</span>
+                        </button>
+                    </div>
+                </div>
+                <div *ngIf="!swap.screen1 && !swap.showInvoice">
+                    <p class="my-3">
+                        <b>Material de Remplacement</b>
+                    </p>
+                    <table [width]="'100%'">
+                        <tr>
+                            <td>Marque:</td>
+                            <td><input type="text" class="border rounded-md py-1 px-3"
+                                    [(ngModel)]="swap.replacedBrand" />
+                            </td>
+                            <td>Num d'serie / IMEI:</td>
+                            <td><input type="text" class="border rounded-md py-1 px-3"
+                                    [(ngModel)]="swap.replacedIMEI" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="my-3"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Modele:</td>
+                            <td><input type="text" class="border rounded-md py-2 px-3"
+                                    [(ngModel)]="swap.replacedModel" />
+                            </td>
+                            <td>prix: </td>
+                            <td><input type="text" class="border rounded-md py-2 px-3" [(ngModel)]="swap.price" /></td>
+                        </tr>
+                    </table>
+                    <div class="flex justify-center">
+                        <button (click)="swap.screen1 = true;"
+                            class="flex items-center ml-6 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-500 border border-transparent rounded-lg active:bg-gray-400 focus:outline-none focus:shadow-outline-lime">
+                            <span>Annuler</span>
+                        </button>
+                        <button (click)="submitSWAP()"
+                            class="flex items-center ml-6 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-lime-700 border border-transparent rounded-lg active:bg-lime-600 focus:outline-none focus:shadow-outline-lime">
+                            <span>Valide</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Workflow File  -->
+            <div class="min-w-0 p-4 bg-white rounded-lg shadow-xs" *ngIf="createWorkflowFile">
+                <h3> <b>Informations Client</b></h3>
+                <br />
+                <table [width]="['100%']">
+                    <tr>
+                        <td>
+                            <span class="text-gray-700 inline m-1">Nom:</span>
+
+                        </td>
+                        <td>
+                            <input style="padding: 5px 10px;border-radius: 10px;"
+                                class="block text-gray-600 bg-gray-300 border-gray-500 border-2"
+                                [(ngModel)]="workflowFile.client.firstName">
+                        </td>
+                        <td>
+                            <span class="text-gray-700 inline m-1">Num Tel 1:</span>
+
+                        </td>
+                        <td>
+                            <input style="padding: 5px 10px;border-radius: 10px;"
+                                class="block text-gray-600 bg-gray-300 border-gray-500 border-2"
+                                [(ngModel)]="workflowFile.client.phoneNumber1">
+                        </td>
+                        <td>
+                            <span class="text-gray-700 inline m-1">Num Cin Passeport:</span>
+
+                        </td>
+                        <td>
+                            <input style="padding: 5px 10px;border-radius: 10px;"
+                                class="block text-gray-600 bg-gray-300 border-gray-500 border-2"
+                                [(ngModel)]="workflowFile.client.cin">
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="height: 10px;"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="text-gray-700 inline m-1">Prenom:</span>
+                        </td>
+                        <td>
+                            <input style="padding: 5px 10px;border-radius: 10px;"
+                                class="block text-gray-600 bg-gray-300 border-gray-500 border-2"
+                                [(ngModel)]="workflowFile.client.lastName">
+
+                        </td>
+                        <td>
+                            <span class="text-gray-700 inline m-1">Num Tel 2:</span>
+
+                        </td>
+                        <td>
+                            <input style="padding: 5px 10px;border-radius: 10px;"
+                                class="block text-gray-600  border-gray-500 border-2"
+                                [(ngModel)]="workflowFile.client.phoneNumber2">
+                        </td>
+                        <td>
+                            <span class="text-gray-700 inline m-1">email:</span>
+
+                        </td>
+                        <td>
+                            <input style="padding: 5px 10px;border-radius: 10px;"
+                                class="block text-gray-600  border-gray-500 border-2"
+                                [(ngModel)]="workflowFile.client.email">
+                        </td>
+
+                    </tr>
+                </table>
+                <br />
+                <hr />
+                <br />
+                <h3> <b>Matériel</b></h3>
+                <br />
+
+                <table [width]="['100%']">
+                    <tr>
+                        <td><b>Marque:</b></td>
+                        <td>{{ myDevice.brand}}</td>
+                        <td><b>Num de serie / IMEI: </b></td>
+                        <td>{{ myDevice.imei }}</td>
+                        <td><b>Etat Terminal:</b></td>
+                        <td>
+                            <select class="border-2 p-1">
+                                <option> Bon Etat </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Modéle:</b></td>
+                        <td>{{ myDevice.model}}</td>
+                        <td><b>Batterie: </b></td>
+                        <td>
+                            <label class="inline-flex items-center ">
+                                <input type="radio" name="accountType" value="1"
+                                    class="text-lime-600 form-radio focus:border-lime-400 focus:outline-none focus:shadow-outline-lime dark:focus:shadow-outline-gray"
+                                    [(ngModel)]="workflowFile.battery">
+                                <span class="ml-2">Avec</span>
+                            </label>
+                            <label class="inline-flex items-center ml-6  ">
+                                <input type="radio" name="accountType" value="0"
+                                    class="text-lime-600 form-radio focus:border-lime-400 focus:outline-none focus:shadow-outline-lime dark:focus:shadow-outline-gray"
+                                    [(ngModel)]="workflowFile.battery">
+                                <span class="ml-2">Sans</span>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><br></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b> Accessoires:</b>
+
+                        </td>
+                        <td colspan="2">
+                            <select name="Accessoires" [(ngModel)]="toAddAccess"
+                                style="width: 80%; height: 150px; border:1px solid" multiple>
+                                <option value="Charger">Charger</option>
+                                <option value="Cable USB">Cable usb</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button (click)="addAccessoires()"
+                                class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-600 border border-transparent rounded-lg active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-lime">
+                                Ajouter >>
+                            </button>
+                            <br />
+                            <br />
+                            <button (click)="removeAccessoires()"
+                                class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-600 border border-transparent rounded-lg active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-lime">
+                                << enlever </button>
+                        </td>
+                        <td colspan="2">
+                            <select name="av-Acce" [(ngModel)]="toRemoveAccess"
+                                style="width:100%; height: 150px; border:1px solid" multiple>
+                                <option *ngFor="let item of workflowFile.Accessoires" value="{{item}}">
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><br></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b> type de Panne:</b>
+
+                        </td>
+                        <td colspan="2">
+                            <select name="cars" [(ngModel)]="toAddPanne"
+                                style="width: 80%; height: 150px; border:1px solid" multiple>
+                                <option value="camera">camera</option>
+                                <option value="panne clavier">panne clavier</option>
+                                <option value="panne camera">panne camera</option>
+                                <option value="panne tactile">panne tactile</option>
+                                <option value="auronomie">auronomie</option>
+                                <option value="probleme de charge">probleme de charge</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button (click)="addPanne()"
+                                class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-600 border border-transparent rounded-lg active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-lime">Ajouter
+                                >></button>
+                            <br />
+                            <br />
+                            <button (click)="removePanne()"
+                                class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-600 border border-transparent rounded-lg active:bg-gray-600 hover:bg-gray-700 focus:outline-none focus:shadow-outline-lime">
+                                << enlever</button>
+                        </td>
+                        <td colspan="2">
+                            <select name="cars" [(ngModel)]="toRemovePanne"
+                                style="width:100%; height: 150px; border:1px solid" multiple>
+                                <option *ngFor="let item of workflowFile.Panne" value="{{item}}">
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <b>Terminal de pret: </b>
+                        </td>
+                        <td>
+                            <label class="inline-flex items-center">
+                                <input type="radio"
+                                    class="text-lime-600 form-radio focus:border-lime-400 focus:outline-none focus:shadow-outline-lime dark:focus:shadow-outline-gray"
+                                    name="term" value="1" [(ngModel)]="workflowFile.terminal">
+                                <span class="ml-2">Avec</span>
+                            </label>
+                            <label class="inline-flex items-center ml-6">
+                                <input type="radio"
+                                    class="text-lime-600 form-radio focus:border-lime-400 focus:outline-none focus:shadow-outline-lime dark:focus:shadow-outline-gray"
+                                    name="term" value="0" [(ngModel)]="workflowFile.terminal">
+                                <span class="ml-2">Sans</span>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Description de la panne: </b>
+
+                        </td>
+                        <td>
+                            <textarea class="border-2 rounded-md" [(ngModel)]="workflowFile.description">
+
+                            </textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Choix de workflow: </b>
+                        </td>
+                        <td>
+                            <select class="border-2 rounded-md p-2" [(ngModel)]="workflowFile.workflow">
+                                <option selected="selected" value="externe">Reparateur Externe</option>
+                                <option value="interne">Reparateur Interne</option>
+                                <option value="normal">Workflow Normal</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <div class="flex justify-end">
+                    <button (click)="createWorkflowFile = false;"
+                        class="flex items-center justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-700 border border-transparent rounded-lg active:bg-gray-600 focus:outline-none focus:shadow-outline-lime">
+                        <span>Annuler</span>
+                    </button>
+                    <button (click)="submitFile()"
+                        class="flex items-center ml-6 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-lime-700 border border-transparent rounded-lg active:bg-lime-600 focus:outline-none focus:shadow-outline-lime">
+                        <span>Suivant</span>
+                    </button>
+                </div>
+                <br>
+
+            </div>
+
+            <!-- PDF File -->
+            <div *ngIf="invoice.shown">
+                <div id="invoice" class="border-gray-200 border p-4 bg-white my-2">
+                    <div class="absolute">
+                        <img src="/assets/logo.png" width="150" height="64" />
+                    </div>
+
+                    <h2 class="text-center h-16 flex justify-center items-center mb-4"
+                        style="font-weight: bold;font-size: 24px;">
+                        Fichie d'intervention
+                    </h2>
+
+                    <div class="flex justify-between">
+                        <p><b>Num Recu: </b> {{ invoice.id }} </p>
+                        <p>
+                            <b>Date: </b> {{ invoice.date }} <br />
+                            <b>Boutique: </b> {{ invoice.shop }}
+                        </p>
+                    </div>
+                    <h3 class="my-3 text-xl"><b>Informations Client</b></h3>
+                    <table class="w-full">
+                        <tr>
+                            <td><b>Nom: </b> {{workflowFile.client.firstName}} </td>
+                            <td><b>Num Tel 1: </b> {{workflowFile.client.phoneNumber1}} </td>
+                        </tr>
+                        <tr>
+                            <td><b>Prenom: </b> {{workflowFile.client.lastName}} </td>
+                            <td><b>Num Tel 2: </b> {{workflowFile.client.phoneNumber2}} </td>
+
+                        </tr>
+                        <tr>
+                            <td><b>Num Cin Passeport: </b> {{workflowFile.client.cin}} </td>
+                            <td><b>Email: </b> {{workflowFile.client.email}} </td>
+                        </tr>
+                    </table>
+                    <h3 class="my-3  text-xl"><b>Material</b></h3>
+                    <table class="w-full">
+                        <tr>
+                            <td><b>Date d'achat: </b> {{myDevice.purchase_date}}</td>
+                            <td><b>Sous garantie: </b> {{myDevice.rest_guarantee > 1 ? 'Oui' : 'Non'}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Marque: </b> {{myDevice.brand}}</td>
+                            <td><b>Modele: </b> {{myDevice.model}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Num serie/ IMEI: </b> {{myDevice.imei}}</td>
+                            <td><b>Etat Terminal: </b> {{workflowFile.status}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Num serie Batterie: </b>
+                                <span *ngIf="workflowFile.battery == 1"> {{myDevice.batteryId}}</span>
+                                <span *ngIf="workflowFile.battery == 0">0</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>type de Panne: </b> {{workflowFile.Panne.join(', ')}}</td>
+                            <td><b>Accessoires: </b> {{workflowFile.Accessoires.join(", ")}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Code de produit: </b> {{myDevice.imei}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Description de panne: </b> {{workflowFile.description}}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>Produit en service: </b>
+                                <input type="checkbox" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><br /></td>
+                        </tr>
+                    </table>
+                    <div class="flex justify-between">
+                        <fieldset class="border-2" style="width: 250px;">
+                            <legend>Signature Client</legend>
+                            <div class="h-9"></div>
+                        </fieldset>
+
+                        <fieldset class="border-2" style="width: 250px;">
+                            <legend>Signature Responsable</legend>
+                            <div class="h-9"></div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-20">
+                    <button
+                        class="m-1 flex items-center justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-700 border border-transparent rounded-lg active:bg-blue-600 focus:outline-none"
+                        (click)="PrintElem()">imprimer fiche / Export PDF</button>
+
+                </div>
+            </div>
+
+            <!-- PDF SWAP -->
+            <div *ngIf="swap.showInvoice">
+                <div id="invoice" class="border-gray-200 border p-4 bg-white my-2">
+                    <div class="absolute">
+                        <img src="/assets/logo.png" width="150" height="64" />
+                    </div>
+
+                    <h2 class="text-center h-16 flex justify-center items-center mb-4"
+                        style="font-weight: bold;font-size: 24px;">
+                        Fichie d'intervention
+                    </h2>
+
+                    <div class="flex justify-between">
+                        <p><b>Num Recu: </b> {{ swap.id }} </p>
+                        <p>
+                            <b>Date: </b> {{ swap.date }} <br />
+                            <b>Boutique: </b> {{ invoice.shop }}
+                        </p>
+                    </div>
+                    <h3 class="my-3 text-xl"><b>Informations Client</b></h3>
+                    <table class="w-full">
+                        <tr>
+                            <td><b>Nom: </b> {{swap.client.firstName}} </td>
+                            <td><b>Num Tel 1: </b> {{swap.client.phoneNumber1}} </td>
+                        </tr>
+                        <tr>
+                            <td><b>Prenom: </b> {{swap.client.lastName}} </td>
+                            <td><b>Num Tel 2: </b> {{swap.client.phoneNumber2}} </td>
+
+                        </tr>
+                        <tr>
+                            <td><b>Num Cin Passeport: </b> {{swap.client.cin}} </td>
+                            <td><b>Email: </b> {{swap.client.email}} </td>
+                        </tr>
+                    </table>
+                    <h3 class="my-3  text-xl"><b>Material</b></h3>
+                    <table class="w-full">
+                        <tr>
+                            <td><b>Date d'achat: </b> {{myDevice.purchase_date}}</td>
+                            <td><b>Sous garantie: </b> {{myDevice.rest_guarantee > 1 ? 'Oui' : 'Non'}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Type: </b> TerminalMobile</td>
+                            <td><b>type de Panne: </b> {{swap.pannes.join(', ')}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Marque: </b> {{myDevice.brand}}</td>
+                            <td><b>description de Panne: </b> {{swap.description}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Modele: </b>{{myDevice.model}} </td>
+                        </tr>
+                        <tr>
+                            <td><b>Num d'serie / IMEI: </b> {{myDevice.imei}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Code de produit: </b> {{myDevice.imei}}</td>
+                        </tr>
+                    </table>
+
+                    <h3 class="my-3  text-xl"><b>Terminal de Remplacement</b></h3>
+                    <div class="w-full">
+                        <p><b>Marque: </b> {{swap.replacedBrand }}</p>
+                        <p><b>Modele: </b> {{swap.replacedModel }}</p>
+                        <div class=" flex justify-between">
+                            <p><b>Num d'serie / IMEI: </b> {{swap.replacedIMEI}}</p>
+                            <p><b>Prix: </b> {{swap.price}}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <fieldset class="border-2" style="width: 250px;">
+                            <legend>Signature Client</legend>
+                            <div class="h-9"></div>
+                        </fieldset>
+
+                        <fieldset class="border-2" style="width: 250px;">
+                            <legend>Signature Responsable</legend>
+                            <div class="h-9"></div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-20">
+                    <button
+                        class="m-1 flex items-center justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-700 border border-transparent rounded-lg active:bg-blue-600 focus:outline-none">
+                        imprimer fiche / Export PDF</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div *ngIf="swap.isModalOpen" class="fixed inset-0 z-30 flex bg-black bg-opacity-50 items-baseline justify-center">
+    <div class="max-w-xl mt-8 overflow-hidden bg-white rounded-t-lg">
+        <div class="mt-4 mb-6 px-6 py-4">
+            <p class="mb-5 text-lg font-semibold text-gray-700"> Produit Disponible: </p>
+
+            <div class="flex text-sm text-gray-700" style="flex-direction: column;min-width: 320px;">
+                <table [width]="'100%'" class="text-center">
+                    <tr class="bg-gray-100 border">
+                        <td class="border">Nom Produit</td>
+                        <td class="border">Quantité</td>
+                    </tr>
+                    <tr>
+                        <td class="border py-2">{{ myDevice.brand }} {{ myDevice.model }}</td>
+                        <td class="border"> 10 </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <footer class="flex  items-center justify-end px-6 py-3 bg-gray-50 ">
+            <button (click)="swap.isModalOpen = false;"
+                class="w-full px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg sm:w-auto hover:border-gray-500">
+                Fermer
+            </button>
+            <p class="w-2"></p>
+            <button (click)="swapDevice()"
+                class="w-full px-4 py-2 text-sm font-medium text-white bg-purple-600 border rounded-lg sm:w-auto hover:bg-purple-700">
+                Remplacer
+            </button>
+        </footer>
+    </div>
+</div>

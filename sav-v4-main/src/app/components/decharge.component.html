@@ -1,0 +1,47 @@
+
+<div class="border-gray-200 border p-4 bg-white m-3" *ngIf="!app.shown">
+    <b>Recherche Decharge:</b>
+    <br />
+    <form (submit)="search()" class="flex justify-between items-center mt-4">
+        <input class=" w-56 px-2 py-1 border-2 border-gray-400 rounded-md" name="text"
+            [(ngModel)]="app.id" />
+        <input value="Rechercher" type="submit"
+            class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-lime-600 border border-transparent rounded-lg active:bg-lime-700 focus:outline-none" />
+    </form>
+</div>
+<div class="border-gray-200 border p-4 bg-white m-3" *ngIf="app.shown">
+    <div class="absolute">
+        <img src="/assets/logo.png" width="150" height="64" />
+    </div>
+
+    <h2 class="text-center h-16 flex justify-center items-center mb-4" style="font-weight: bold;font-size: 24px;">
+        Decharge d'envoi&nbsp;<b class="uppercase"> {{app.supplier}}</b>
+    </h2>
+
+    <div class="flex justify-between mb-3">
+        <div>
+            <p><b>Ref decharge: </b>{{ app.id }}</p>
+            <p><b>Depart: </b> {{ app.shop }}</p>
+            <p><b>Destination: </b> {{app.supplier}} </p>
+        </div>
+        <p>Date: {{ dateFormat(app.date) }} </p>
+    </div>
+    <table class="w-full border-2 m-2 text-center">
+        <tr class="bg-green-400">
+            <th class="border-2"><b> Marque </b></th>
+            <th class="border-2"><b> Modele </b></th>
+            <th class="border-2"><b> N'serie </b></th>
+            <th class="border-2"><b> N'serie batterie </b></th>
+            <th class="border-2"><b> Fournissuer</b></th>
+            <th class="border-2"><b> date</b></th>
+        </tr>
+        <tr *ngFor="let item of app.dechargeItems">
+            <td class="border-2 text-sm p-1"> {{ item.device.brand }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.device.model }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.device.imei }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.device.batteryId }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.device.supplier }}</td>
+            <td class="border-2 text-sm p-1"> {{ dateFormat(item.createdAt) }}</td>
+        </tr>
+    </table>
+</div>

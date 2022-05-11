@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  cin          String         @id
+  firstName    String
+  lastName     String
+  phoneNumber1 String
+  phoneNumber2 String?
+  email        String?
+  intervention Intervention[]
+}
+
+model Device {
+  imei          String         @id
+  brand         String
+  model         String
+  status        String
+  purchase_date DateTime
+  guarantee     Int
+  nb_retour_sav Int
+  insured       Int
+  batteryId     String
+  supplier      String
+  isAvailable   Boolean        @default(true)
+  intervention  Intervention[]
+}
+
+model Intervention {
+  id                  Int                   @id @default(autoincrement())
+  imei                String
+  clientId            String
+  panneType           String?
+  accessories         String?
+  terminalPret        Int
+  description         String
+  workflow            String
+  createdAt           DateTime              @default(now())
+  createdBy           String?
+  status              String?
+  dischargeId         Int?
+  outStore            Boolean               @default(false)
+  intervention_status Intervention_status[]
+  available_client    Available_client[]
+  Swap                Swap[]
+
+  client    Client     @relation(fields: [clientId], references: [cin], map: "Intervention_clientId_fkey")
+  device    Device     @relation(fields: [imei], references: [imei], map: "Intervention_imei_fkey")
+  Discharge Discharge? @relation(fields: [dischargeId], references: [id])
+
+  Swap_status Swap_status[]
+  @@index([clientId], map: "Intervention_clientId_fkey")
+  @@index([imei], map: "Intervention_imei_fkey")
+}
+
+model Intervention_status {
+  id             Int      @id @default(autoincrement())
+  interventionId Int
+  status         String
+  obs            String?
+  local          String?
+  createdAt      DateTime @default(now())
+  marque         String?
+  modele         String?
+  newIMEI        String?
+  pdflink        String?
+  ispdfClosed    Boolean  @default(false)
+  amount         String?
+
+
+  intervention Intervention @relation(fields: [interventionId], references: [id])
+}
+
+model Available_client {
+  id             Int     @id @default(autoincrement())
+  interventionId Int
+  shop           String
+  isAvailable    Boolean
+  callAt         String
+  pec            String
+  comment        String?
+
+  intervention Intervention @relation(fields: [interventionId], references: [id])
+}
+
+model Swap {
+  id             Int    @id @default(autoincrement())
+  interventionId Int
+  status         String @default("pending")
+  imei           String
+  brand          String
+  model          String
+  price          String
+
+  intervention Intervention @relation(fields: [interventionId], references: [id])
+}
+
+model Swap_status {
+  id             Int      @id @default(autoincrement())
+  interventionId Int
+  status         String
+  comment        String
+  createdAt      DateTime @default(now())
+
+  intervention Intervention @relation(fields: [interventionId], references: [id])
+
+}
+
+model User {
+  id        Int         @id @default(autoincrement())
+  email     String      @unique(map: "User_email_key")
+  password  String
+  firstName String
+  lastName  String
+  Discharge Discharge[]
+}
+
+model Discharge {
+  id          Int      @id @default(autoincrement())
+  userid      Int
+  destination String
+  createdAt   DateTime @default(now())
+
+  interventions Intervention[]
+  user          User?          @relation(fields: [userid], references: [id])
+}

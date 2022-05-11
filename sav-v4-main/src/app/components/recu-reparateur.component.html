@@ -1,0 +1,121 @@
+<div class="min-w-0 m-3 p-4 bg-white rounded-lg shadow-xs">
+    <h3>Trier par type de operation</h3>
+    <select class="border-2 p-2 m-2" [(ngModel)]="selectedOption">
+        <option *ngFor="let item of optionList" [value]="item">{{ item }}</option>
+    </select>
+    <hr class="m-2" />
+    <h3>Liste des articles a expedier aux reparateurs externe</h3>
+    <table class="w-full border-2 m-2 text-center">
+        <tr>
+            <th class="border-2"></th>
+            <th class="border-2"><b> Num Fiche</b></th>
+            <th class="border-2"><b> Modele</b></th>
+            <th class="border-2"><b> N'serie</b></th>
+            <th class="border-2"><b> N'serie batterie </b></th>
+            <th class="border-2"><b> Etat Fiche</b></th>
+            <th class="border-2"><b> Etat</b></th>
+            <ng-template [ngIf]="selectedOption == 'Remplacé'">
+                <th class="border-2"><b> Commercialisé</b></th>
+                <th class="border-2"><b> Marque</b></th>
+                <th class="border-2"><b> Modele</b></th>
+                <th class="border-2"><b> IMEI</b></th>
+            </ng-template>
+            <ng-template [ngIf]="selectedOption == 'Devis avec terminal'">
+                <th class="border-2"><b>Insertion Devis</b></th>
+                <th class="border-2"><b>Montant</b></th>
+            </ng-template>
+            <ng-template [ngIf]="selectedOption == 'Expertise avec terminal'">
+                <th class="border-2"><b>Insertion Expertise</b></th>
+            </ng-template>
+            <ng-template [ngIf]="selectedOption == 'Devis sans terminal'">
+                <th class="border-2"><b>Insertion Devis</b></th>
+                <th class="border-2"><b>Montant</b></th>
+            </ng-template>
+            <ng-template [ngIf]="selectedOption == 'Expertise sans terminal'">
+                <th class="border-2"><b>Insertion Expertise</b></th>
+            </ng-template>
+
+
+        </tr>
+
+        <tr *ngFor="let item of invoiceList">
+            <td class="border-2 p-1">
+                <button style="margin: auto;" (click)="setInvocieStatus(item)"
+                    class="flex items-center justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-gray-600 border border-transparent rounded-lg active:bg-gray-700 focus:outline-none">
+                    OK</button>
+            </td>
+            <td class="border-2 text-sm p-1">{{ item.id }}</td>
+            <td class="border-2 text-sm p-1"> {{ item.device.model }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.device.imei }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.device.batteryId }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.intervention_status[0].status }}</td>
+            <td class="border-2 text-sm p-1"> {{ item.intervention_status[0].obs }}</td>
+            <ng-template [ngIf]="selectedOption == 'Remplacé'">
+                <td class="border-2">
+                    <select class="border-2 p-2 m-2" [(ngModel)]="item.remp">
+                        <option [value]="1">Oui</option>
+                        <option [value]="0">Non</option>
+                    </select>
+                </td>
+                <ng-template [ngIf]="item.remp == 1">
+                    <td class="border-2">
+                        <select class="border-2 p-2 m-2" [(ngModel)]="item.operation.marque">
+                            <option [value]="'Portable'">Portable</option>
+                            <option [value]="'Tablet'">Tablet</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="border-2 p-2 m-2" [(ngModel)]="item.operation.modele">
+                            <option [value]="'SAMSUNG'">SAMSUNG</option>
+                            <option [value]="'IPHONE'">IPHONE</option>
+                        </select>
+                    </td>
+                </ng-template>
+                <ng-template [ngIf]="item.remp == 0">
+                    <td class="border-2">
+                        <input type="text" class="border border-gray-300 rounded-md p-2"
+                            [(ngModel)]="item.operation.marque" />
+                    </td>
+                    <td class="border-2">
+                        <input type="text" class="border border-gray-300 rounded-md p-2"
+                            [(ngModel)]="item.operation.modele" />
+                    </td>
+                </ng-template>
+                <td class="border-2">
+                    <input type="text" class="border border-gray-300 rounded-md p-2"
+                        [(ngModel)]="item.operation.newIMEI" />
+                </td>
+            </ng-template>
+            <ng-template [ngIf]="selectedOption == 'Devis avec terminal'">
+                <td class="border-2 text-sm p-1">
+                    <input type="file" (change)="selectFile($event)" />
+
+                    <!-- [(ngModel)]="" -->
+                </td>
+                <td class="border-2 text-sm p-1">
+                    <input type="text" class="border border-gray-300 rounded-md p-2"
+                        [(ngModel)]="item.operation.amount" />
+                </td>
+            </ng-template>
+            <ng-template [ngIf]="selectedOption == 'Expertise avec terminal'">
+                <td class="border-2">
+                    <input type="file" [(ngModel)]="item.operation.pdfLink" (change)="selectFile($event)" />
+                </td>
+            </ng-template>
+            <ng-template [ngIf]="selectedOption == 'Devis sans terminal'">
+                <td class="border-2 text-sm p-1">
+                    <input type="file" (change)="selectFile($event)" />
+                </td>
+                <td class="border-2 text-sm p-1">
+                    <input type="text" class="border border-gray-300 rounded-md p-2"
+                        [(ngModel)]="item.operation.amount" />
+                </td>
+            </ng-template>
+            <ng-template [ngIf]="selectedOption == 'Expertise sans terminal'">
+                <td class="border-2">
+                    <input type="file" [(ngModel)]="item.operation.pdfLink" (change)="selectFile($event)" />
+                </td>
+            </ng-template>
+        </tr>
+    </table>
+</div>

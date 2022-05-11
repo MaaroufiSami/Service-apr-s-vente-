@@ -1,0 +1,36 @@
+
+$backgroundColor: #f9fafb;
+$primaryColor: rgb(248 201 74);
+$cardShadow: 0px 3px 11px -4px #555555;
+
+
+body,
+html {
+    height: 100%;
+    font-family: Ubuntu-Regular, sans-serif;
+    background-color: $backgroundColor;
+
+}
+a {
+    text-decoration: none;
+}
+
+.app {
+    .sidebar {
+        .sidebarLink {
+            cursor: pointer;
+        }
+        .sidebarLink .activeSpan {
+            display: none;
+        }
+        .sidebarLinkActive .activeSpan {
+            display: block;
+        }
+        .sidebarLinkActive {
+            color: black;
+        }
+    }
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

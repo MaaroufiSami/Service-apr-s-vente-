@@ -1,0 +1,50 @@
+<div class="min-w-0 m-3 p-4 bg-white rounded-lg shadow-xs" *ngIf="!app.showPDF">
+    <h3>Statut fiche</h3>
+    <select class="border-2 p-2 m-2" [(ngModel)]="app.selectedOption" (change)="onOptionChange()">
+        <option [value]="'En attente de validation expertise'">En attente de validation expertise</option>
+        <option [value]="'En attente de payement devis'">En attente de payement devis</option>
+    </select>
+    <hr class="m-2" />
+    <h3>Liste des fiches interventions</h3>
+    <table class="w-full border-2 m-2 text-center">
+        <tr>
+            <th class="border-2">N°Fiche</th>
+            <th class="border-2">Statut</th>
+            <th class="border-2">N°Contact client</th>
+            <th class="border-2">Date de prise en charge</th>
+            <th class="border-2">Utilisateur en charge de la demande</th>
+            <th class="border-2">Createur de la fiche</th>
+            <th class="border-2">Document</th>
+        </tr>
+
+        <tr *ngFor="let item of app.itemsList">
+            <td class="border-2 text-sm p-1">{{ item.id }}</td>
+            <td class="border-2 text-sm p-1"> {{ item.status }} </td>
+            <td class="border-2 text-sm p-1"> {{ item.clientPhone }} </td>
+            <td class="border-2 text-sm p-1"> {{ " -- " }} </td>
+            <td class="border-2 text-sm p-1"> {{ " -- " }}</td>
+            <td class="border-2 text-sm p-1"> {{ (item.createdBy) }}</td>
+            <td class="border-2 text-sm p-1">
+                <span class="text-orange-500 underline" style="cursor: pointer" (click)="app.callShowPdf(item)">
+                    {{ item.pdfLink }}
+                </span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="min-w-0 m-3 p-4 bg-white rounded-lg shadow-md flex justify-center items-center"
+    style="flex-direction: column;" *ngIf="app.showPDF">
+    <pdf-viewer [src]="app.pdfToShow" [render-text]="true" [original-size]="true"
+        style="width: 450px; height: 600px; border:2px solid gray">
+    </pdf-viewer>
+
+    <div class="bg-gray-50 flex justify-center p-5 mt-2">
+        <button style="width: 200px;" (click)="acceptPDF()"
+            class="mr-1 px-4 py-2 text-sm font-medium text-white  bg-gray-500 border border-gray-600 rounded-lg active:bg-gray-700">
+            accepter</button>
+        <button style="width: 200px;" (click)="refusePDF()"
+            class="mr-1 px-4 py-2 text-sm font-medium text-white  bg-gray-500 border border-gray-600 rounded-lg active:bg-gray-700">
+            refuse</button>
+    </div>
+</div>

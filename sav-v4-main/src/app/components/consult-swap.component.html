@@ -1,0 +1,54 @@
+<div class="min-w-0 m-3 p-4 bg-white rounded-lg shadow-md" *ngIf="app.screen1">
+    <div class="flex items-center mb-3" style="height: 20px;">
+        <p style="width: 15px; height: 15px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path
+                    d="M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z" />
+            </svg>
+        </p>
+        <h1 class="ml-2 font-bold">Verification produit</h1>
+    </div>
+    <div class="p-2">
+        <form (submit)="search()" class="flex justify-between items-center mt-4">
+            <input class=" w-56 px-2 py-1 border-2 border-gray-400 rounded-md" name="text"
+                [(ngModel)]="app.searchValue" />
+            <input value="Rechercher" type="submit"
+                class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-lime-600 border border-transparent rounded-lg active:bg-lime-700 focus:outline-none" />
+        </form>
+
+    </div>
+</div>
+
+<div class="min-w-0 m-3 p-4 bg-white rounded-lg shadow-md" *ngIf="app.screen2">
+    <div class="flex items-center mb-3" style="height: 20px;">
+        <p style="width: 15px; height: 15px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path
+                    d="M464 64C490.5 64 512 85.49 512 112V176C512 202.5 490.5 224 464 224H48C21.49 224 0 202.5 0 176V112C0 85.49 21.49 64 48 64H464zM448 128H320V160H448V128zM464 288C490.5 288 512 309.5 512 336V400C512 426.5 490.5 448 464 448H48C21.49 448 0 426.5 0 400V336C0 309.5 21.49 288 48 288H464zM192 352V384H448V352H192z" />
+            </svg>
+        </p>
+        <h1 class="ml-2 font-bold">Consulter produit</h1>
+    </div>
+    <div class="flex justify-end px-2">
+        <p class="border rounded-md px-3">
+            Num Fiche:<br />
+            <b class="text-lime-600"> {{app.swapId}} </b>
+        </p>
+    </div>
+    <div class="p-2">
+        <table [width]="'100%'" [border]="1">
+            <tr class="border bg-gray-100">
+                <th class="py-2">Date de bon de replacement</th>
+                <th>statut</th>
+                <th>Commentaire</th>
+            </tr>
+            <ng-template ngFor let-item [ngForOf]="app.statusItems">
+                <tr class="text-center border-2 py-1 hover:bg-lime-50" style="cursor: pointer;">
+                    <td class="py-2">{{ dateFormat(item.createdAt)}}</td>
+                    <td>{{ item.status }}</td>
+                    <td>{{ item.comment }}</td>
+                </tr>
+            </ng-template>
+        </table>
+    </div>
+</div>
