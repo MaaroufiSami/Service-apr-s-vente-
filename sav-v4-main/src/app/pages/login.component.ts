@@ -10,6 +10,7 @@ import { ApiService } from '../services/api.service';
 export class LoginComponent {
 
   user: any = { username: "", password: "", result: false, msg: "" };
+  return: any;
 
   constructor(private apiService: ApiService, private router: Router) {
     var e = localStorage.getItem("token");
@@ -19,7 +20,10 @@ export class LoginComponent {
   }
 
   login() {
-    console.log(this.user);
+    localStorage.setItem("token","12345");
+    localStorage.setItem("user", JSON.stringify({id: 1,email: "ss", firstName: "ss", lastName: "ss"}));
+    this.router.navigate(['/']);
+    return; 
     this.apiService.login({ email: this.user.username, password: this.user.password }).subscribe((result: any) => {
       if (result.err) {
         this.user.result = true;

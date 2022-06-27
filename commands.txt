@@ -1,0 +1,6 @@
+# build images seulement une fois 
+docker-compose build
+# run containers
+docker-compose up
+# exit 
+CTRL + C

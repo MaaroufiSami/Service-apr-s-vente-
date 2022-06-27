@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql:8.0.17
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: billcomsav
+    ports:
+     - "3306:3306"
+    networks:
+      - backend
+
+  back:
+    build:
+      context: ./sav-node-main
+      dockerfile: Dockerfile
+    container_name: back
+    networks:
+     - backend
+    ports:
+     - "3000:3000"
+    environment:
+      DATABASE_URL: "mysql://root:root@mysql:3306/billcomsav"
+    depends_on:
+      - mysql
+  front:
+    build:
+      context: ./sav-v4-main
+      dockerfile: Dockerfile
+    container_name: front
+    networks:
+      - backend
+    ports:
+      - "8080:80"
+    depends_on:
+      - back
+      - mysql
+networks:
+  backend:
+    driver: bridge
+volumes:
+  my-datavolume:

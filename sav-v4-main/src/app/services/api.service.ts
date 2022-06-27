@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class ApiService {
-    apiUrl = "http://127.0.0.1:3000/api";
+    apiUrl = "http://localhost:3000/api";
     constructor(private http: HttpClient) { }
 
     // AUTH
